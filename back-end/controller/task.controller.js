@@ -1,8 +1,8 @@
 const { Task } = require("../models/index");
-// const Employe = require("../models/index").Task;
+// const Task = require("../models/index").Task;
 
 /**
- * Recupere la liste des employes en DB et ma retourne au client
+ * Recupere la liste des tasks en DB et ma retourne au client
  * @param {Req} req la requete provenant du client
  * @param {Res} res la reponse a construire et a envoyer au client
  */

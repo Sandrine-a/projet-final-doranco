@@ -13,7 +13,8 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 const db = {
   sequelize,
   DataTypes,
-  Task: require("./task.model")(sequelize, DataTypes) // Ajouter le model employe pour la synchronisation
+  User: require("./user.model")(sequelize, DataTypes), // Ajouter le model user pour la synchronisation
+  Task: require("./task.model")(sequelize, DataTypes), // Ajouter le model task pour la synchronisation
 };
 
 module.exports = db;
