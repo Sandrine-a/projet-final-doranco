@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const user_ctrl = require("../controller/user.controller");
+const user_ctrl = require("../controllers/user.controller");
 
 // Enregistement des endpoints et redirection des requetes vers les methodes du controller
 // router.get("/", user_ctrl.get_user);
