@@ -21,7 +21,7 @@ exports.create_user = (req, res) => {
     password,
   };
   User.create(user)
-    .then((data) => res.status(200).json({ data }))
+    .then((data) => res.status(201).json({ data }))
     .catch((error) =>
       res.status(500).json({ message: "Erreur create in DB ", error })
     );
@@ -42,10 +42,10 @@ exports.update_user = (req, res) => {
   User.update(req.body, { where: { id } })
     .then((number) => {
       if (number == 1) {
-        res.json({ message: "Update avec succes" });
+        res.json({ message: "Update successed !" });
       } else {
         res.json({
-          message: `Echec mise a jour cote BD user avec id = ${id}`,
+          message: `Failed to updated id = ${id}`,
         });
       }
     })
@@ -71,15 +71,47 @@ exports.delete_user = (req, res) => {
   User.destroy({ where: { id } })
     .then((number) => {
       if (number == 1) {
-        res.json({ message: "Delete success" });
+        res.json({ message: "User is deleted !" });
       } else {
         console.log(number);
-        res.json({ message: `Erreur delete bd user id = ${id} introuvable` });
+        res.json({ message: `User id = ${id} not found !` });
       }
     })
     .catch((error) =>
       res
         .status(500)
-        .json({ message: `Erreur delete user avec id = ${id}`, error })
+        .json({ message: `Failed to delete = ${id}`, error })
+    );
+};
+
+/**
+ * Recupere la liste de tous les users en DB et la retourne au client
+ * @param {Req} req la requete provenant du client
+ * @param {Res} res la reponse a construire et a envoyer au client
+ */
+exports.get_users = (req, res) => {
+  User.findAll()
+  .then((data) => res.json({ data }))
+  .catch((error) =>
+    res.status(500).json({ message: "Internal error, error" })
+  );
+}
+
+/**
+ * Permet de trouver un user
+ * @param {Req} req la requete provenant du client
+ * @param {Res} res la reponse a construire et a envoyer au clien
+ */
+exports.get_one_user = (req, res) => {
+  //Recuperation du id du user dans parametre url
+  const id = Number(req.params.id);
+
+  // Valider la requete
+  if (!id) return res.status(400).json({ message: "Invalid ID!" });
+
+  User.findOne({ where: { id: id } })
+    .then((data) => res.json({ data }))
+    .catch((error) =>
+      res.status(500).json({ message: "Internal error", error })
     );
 };
