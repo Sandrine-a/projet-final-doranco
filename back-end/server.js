@@ -27,6 +27,8 @@ db.sequelize
   )
   .catch((error) => console.log("ERREUR - Échec connexion a la DB ", error));
 
+// Ajout de la relation 1 user has many tasks - 1 TO MANY RELATION
+
 // db.authenticate()
 //   .then(() =>
 //     console.log("Connection  to database has been established successfully.")

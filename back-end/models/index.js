@@ -20,4 +20,14 @@ const db = {
   Task: require("./task.model")(sequelize, DataTypes), // Ajouter le model task pour la synchronisation
 };
 
+// Ajout de la relation 1 user has many tasks - 1 TO MANY RELATION
+db.User.hasMany(db.Task, {
+  foreignKey: "user_id",
+  as: "task",
+});
+db.Task.belongsTo(db.User, {
+  foreignKey: "user_id",
+  as: "user"
+})
+
 module.exports = db;
