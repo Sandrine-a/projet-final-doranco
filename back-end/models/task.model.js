@@ -12,21 +12,33 @@ module.exports = (sequelize, datatypes) => {
       allowNull: false,
       validate: {
         min: 1,
-        max: 90
-      }
+        max: 90,
+      },
     },
     content: {
       type: datatypes.TEXT,
+      validate: {
+        max: 2000,
+      },
     },
     day: {
       type: datatypes.DATE,
       allowNull: false,
+      validate: {
+        max: 70,
+      },
     },
     time: {
       type: datatypes.TIME,
+      validate: {
+        max: 50,
+      },
     },
     taskColor: {
       type: datatypes.STRING,
+      validate: {
+        max: 50,
+      },
     },
   });
 
