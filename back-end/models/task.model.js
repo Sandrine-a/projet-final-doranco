@@ -10,6 +10,10 @@ module.exports = (sequelize, datatypes) => {
     title: {
       type: datatypes.STRING,
       allowNull: false,
+      validate: {
+        min: 1,
+        max: 90
+      }
     },
     content: {
       type: datatypes.TEXT,

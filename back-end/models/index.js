@@ -24,10 +24,11 @@ const db = {
 db.User.hasMany(db.Task, {
   foreignKey: "user_id",
   as: "task",
+  onDelete: "cascade",
 });
 db.Task.belongsTo(db.User, {
   foreignKey: "user_id",
-  as: "user"
-})
+  as: "user",
+});
 
 module.exports = db;

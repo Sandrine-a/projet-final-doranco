@@ -17,15 +17,13 @@ exports.create_user = (req, res) => {
   if (!email || !username || !password)
     return res.status(400).json({ message: "Data missing" });
 
-  //Ajouter le findone pour voir si l'user exist
-  //Ajouter le findone pour voir si l'user exist
+  //La validation par unique fait qu'il ne peut y avoir 2 adresses identiques en bdd
 
   //Hash du mdp pour l'enregistrer en bdd
   bcrypt
     .hash(password, 10)
     .then((hash) => {
       // Creer user a enregistrer
-      console.log(hash);
       const user = {
         email: email,
         username: username,
@@ -63,15 +61,12 @@ exports.get_one_user = (req, res) => {
       if (!user) {
         return res.status(401).json({ error: "Bad credentials !" });
       } else {
-        console.log("bcrypt go");
         bcrypt
           .compare(password, user.password)
           .then((valid) => {
             if (!valid) {
-              console.log("not valide");
               return res.status(401).json({ error: "Bad credentials !" });
             } else {
-              console.log("VALIDDD");
               res.status(200).json({
                 userId: user.id,
                 token: jwt.sign(
@@ -96,28 +91,85 @@ exports.get_one_user = (req, res) => {
  * @param {Res} res la reponse a construire et a envoyer au client
  */
 exports.update_user = (req, res) => {
-  //Recuperation du id du parametre url
   const id = Number(req.params.id);
 
-  // Valider la requete
-  if (!req.body.username || !req.body.password || !id)
-    return res.status(400).json({ message: "Invalid, email, username or od" });
+  const email = req.body.email;
+  const username = req.body.username;
+  const password = req.body.password;
 
-  User.update(req.body, { where: { id } })
-    .then((number) => {
-      if (number == 1) {
-        res.json({ message: "Update successed !" });
-      } else {
-        res.json({
-          message: `Failed to updated id = ${id}`,
-        });
-      }
-    })
-    .catch((error) =>
-      res
-        .status(500)
-        .json({ message: `Error in updated user where id = ${id}`, error })
-    );
+  // Valider la requete
+  if (/* !req.body.username || !req.body.password  || */ !id)
+    return res.status(400).json({ message: "Invalid, email, username or id" });
+
+  if (id != req.auth.userId) {
+    res.status(401).json({ message: "Unauthorized!" });
+  } else {
+    if (password) {
+      console.log("password");
+      bcrypt.hash(password, 10).then((hash) => {
+        const user = {
+          email: email,
+          username: username,
+          password: hash,
+        };
+        // Update the password in the database
+        User.update(user, { where: { id } })
+          .then((number) => {
+            if (number == 1) {
+              res.json({ message: "Update successed !" });
+            } else {
+              res.json({ message: `User with ID ${id} not found!` });
+            }
+          })
+          .catch((error) =>
+            res.status(500).json({
+              message: `Error updating password for user with ID ${id}`,
+              error,
+            })
+          );
+      });
+    } else {
+      console.log("no pass");
+      const user = {
+        email: email,
+        username: username,
+      };
+      // Update only user email and/or username
+      User.update(user, { where: { id } })
+        .then((number) => {
+          if (number == 1) {
+            res.json({ message: "Update successed !" });
+          } else {
+            res.json({ message: `User with ID ${id} not found!` });
+          }
+        })
+        .catch((error) =>
+          res.status(500).json({
+            message: `Error updating password for user with ID ${id}`,
+            error,
+          })
+        );
+    }
+
+    // User.update(req.body, { where: { id } })
+    //   .then((number) => {
+    //     if (number == 1) {
+    //       res.json({ message: "Update successed !" });
+    //     } else {
+    //       console.log(number);
+    //       res.json({ message: `User id = ${id} not found !` });
+    //     }
+    //   })
+    //   .catch((error) =>
+    //     res.status(500).json({
+    //       message: `Error in updated user where id = ${id}`,
+    //       error,
+    //     })
+    //   )
+    //   .catch((error) =>
+    //     res.status(500).json({ message: "Erreur create in DB ", error })
+    //   );
+  }
 };
 
 /**
@@ -132,18 +184,109 @@ exports.delete_user = (req, res) => {
     return res.status(400).json({ message: "Invalid user" });
   }
 
-  User.destroy({ where: { id } })
-    .then((number) => {
-      if (number == 1) {
-        res.json({ message: "User is deleted !" });
-      } else {
-        console.log(number);
-        res.json({ message: `User id = ${id} not found !` });
+  // Valider si le user dans l'authentification est = au user concerné
+  if (id != req.auth.userId) {
+    res.status(401).json({ message: "Unauthorized!" });
+  } else {
+    User.destroy({ where: { id } })
+      .then((number) => {
+        if (number == 1) {
+          res.json({ message: "User is deleted !" });
+        } else {
+          res.json({ message: `User id = ${id} not found !` });
+        }
+      })
+      .catch((error) =>
+        res.status(500).json({ message: `Failed to delete = ${id}`, error })
+      );
+  }
+};
+
+
+////////////////////////////////////////// -- ////////////////////////////////////////////////////////////
+
+/**
+ * Permet la modification du username et mail
+ * @param {Req} req la requete provenant du client
+ * @param {Res} res la reponse a construire et a envoyer au client
+ */
+exports.update_user_first = (req, res) => {
+  const id = Number(req.params.id);
+  const password = req.body.password;
+
+  // Valider la requete
+  if (!req.body.username /* || !req.body.password  */ || !id)
+    return res.status(400).json({ message: "Invalid, email, username or od" });
+
+  if (id != req.auth.userId) {
+    res.status(401).json({ message: "Unauthorized!" });
+  } else {
+    User.update(req.body, { where: { id } })
+      .then((number) => {
+        if (number == 1) {
+          res.json({ message: "Update successed !" });
+        } else {
+          console.log(number);
+          res.json({ message: `User id = ${id} not found !` });
+        }
+      })
+      .catch((error) =>
+        res.status(500).json({
+          message: `Error in updated user where id = ${id}`,
+          error,
+        })
+      )
+      .catch((error) =>
+        res.status(500).json({ message: "Erreur create in DB ", error })
+      );
+  }
+};
+/**
+ * Permet la modification du password
+ * @param {Req} req la requete provenant du client
+ * @param {Res} res la reponse a construire et a envoyer au client
+ */
+exports.update_user_password = (req, res) => {
+  const id = Number(req.params.id);
+  const newPassword = req.body.password;
+
+  // Validate the request
+  if (!id || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: "Invalid request, missing user ID or new password" });
+  }
+
+  // Check if the user is authorized to update this account
+  if (id != req.auth.userId) {
+    res.status(401).json({ message: "Unauthorized!" });
+  } else {
+    // Hash the new password
+    bcrypt.hash(newPassword, 10, (err, hash) => {
+      if (err) {
+        return res.status(500).json({
+          message: `Error hashing password for user with ID ${id}`,
+          error: err,
+        });
       }
-    })
-    .catch((error) =>
-      res.status(500).json({ message: `Failed to delete = ${id}`, error })
-    );
+
+      // Update the password in the database
+      User.update({ password: hash }, { where: { id } })
+        .then((number) => {
+          if (number == 1) {
+            res.json({ message: "Password updated successfully!" });
+          } else {
+            res.json({ message: `User with ID ${id} not found!` });
+          }
+        })
+        .catch((error) =>
+          res.status(500).json({
+            message: `Error updating password for user with ID ${id}`,
+            error,
+          })
+        );
+    });
+  }
 };
 
 /**
@@ -151,13 +294,13 @@ exports.delete_user = (req, res) => {
  * @param {Req} req la requete provenant du client
  * @param {Res} res la reponse a construire et a envoyer au client
  */
-exports.get_users = (req, res) => {
-  User.findAll({})
-    .then((data) => res.json({ data }))
-    .catch((error) =>
-      res.status(500).json({ message: "Internal error, error" })
-    );
-};
+// exports.get_users = (req, res) => {
+//   User.findAll({})
+//     .then((data) => res.json({ data }))
+//     .catch((error) =>
+//       res.status(500).json({ message: "Internal error, error" })
+//     );
+// };
 
 /**
  * Permet les tasks du User
@@ -165,27 +308,27 @@ exports.get_users = (req, res) => {
  * @param {Req} req la requete provenant du client
  * @param {Res} res la reponse a construire et a envoyer au clien
  */
-exports.get_user_tasks = (red, res) => {
-  //Recuperation de l'id  de l'user a partir de la requete
-  const id = Number(req.params.id);
+// exports.get_user_tasks = (red, res) => {
+//   //Recuperation de l'id  de l'user a partir de la requete
+//   const id = Number(req.params.id);
 
-  //Vérification des inputs obligatoires
-  if (!id) {
-    return res.status(400).json({ error: "Missing parameters" });
-  }
+//   //Vérification des inputs obligatoires
+//   if (!id) {
+//     return res.status(400).json({ error: "Missing parameters" });
+//   }
 
-  //Nous recherchons les tasks du users
-  User.findAll({
-    include: [
-      {
-        model: Task,
-        as: "task",
-      },
-    ],
-    where: { id: 1 },
-  })
-    .then((data) => res.json({ data }))
-    .catch((error) =>
-      res.status(500).json({ message: "Internal error, error" })
-    );
-};
+//   //Nous recherchons les tasks du users
+//   User.findAll({
+//     include: [
+//       {
+//         model: Task,
+//         as: "task",
+//       },
+//     ],
+//     where: { id: 1 },
+//   })
+//     .then((data) => res.json({ data }))
+//     .catch((error) =>
+//       res.status(500).json({ message: "Internal error, error" })
+//     );
+// };
