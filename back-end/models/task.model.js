@@ -12,7 +12,7 @@ module.exports = (sequelize, datatypes) => {
       allowNull: false,
       validate: {
         min: 1,
-        max: 90,
+        max: 100,
       },
     },
     content: {

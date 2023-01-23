@@ -1,8 +1,6 @@
 const express = require("express");
 require("dotenv").config();
 
-// console.log(process.env)
-
 const app = express();
 const logger = require("morgan"); // Import de morgan pour ajouter logs serveur
 const cors = require("cors"); // Import du cors config
@@ -23,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 db.sequelize
   .sync() //Synchronise tous les models automatiquement
   .then(() =>
-    console.log("Connexion à la base de données avec succes. Sync done!")
+    console.log("Connected with database ok. Sync done!")
   )
   .catch((error) => console.log("ERREUR - Échec connexion a la DB ", error));
 

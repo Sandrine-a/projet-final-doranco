@@ -8,7 +8,8 @@ const auth = require("../middleware/auth");
 // router.get("/:id", user_ctrl.get_one_user); // Pour LOGIN
 
 router.post("/signup", user_ctrl.create_user); // Pour SIGNUP
-router.post("/login", user_ctrl.get_one_user); // Pour LOGIN
+router.post("/token", user_ctrl.get_user_token); // Pour AVOIR LE TOKEN
+router.get("/me", auth, user_ctrl.get_one_user); // Pour GET USER
 router.delete("/:id", auth, user_ctrl.delete_user); // POUR DELETE
 router.put("/:id", auth ,user_ctrl.update_user); //// Voir changement mdp
 

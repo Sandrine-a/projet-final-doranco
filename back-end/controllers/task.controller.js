@@ -4,14 +4,14 @@ const { Task, User } = require("../models/index");
 /**
  * Permet la creation d'un nouvel employe en DB, si success retourne l'objet persiste
  * @param {Req} req la requete provenant du client
- * @param {Res} res la reponse a construire et a envoyer au client
+ * @param {Res} res la reponse a envoyer au client : id
  */
 exports.create_task = (req, res) => {
   //Validation de la requete
   const title = req.body.title;
   const content = req.body.content;
   const day = req.body.day;
-  const time = req.body.time;
+  const time = req.body.time ? req.body.time : null;
   const taskColor = req.body.taskColor;
 
   if (!title || !day)
@@ -32,7 +32,7 @@ exports.create_task = (req, res) => {
         user_id: user.id,
       };
       Task.create(task)
-        .then((data) => res.status(201).json({ data }))
+        .then((data) => res.status(201).json({id: data.id}))
         .catch((error) =>
           res.status(400).json({ message: `Erreur create in DB  ${error}` })
         );

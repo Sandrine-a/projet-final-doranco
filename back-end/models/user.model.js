@@ -13,6 +13,7 @@ module.exports = (sequelize, datatypes) => {
       unique: true,
       validate: {
         isEmail: true,
+        isLowercase: true,
         min: 3,
         max: 200,
       },

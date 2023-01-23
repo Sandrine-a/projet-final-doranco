@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 /**
  * Permet la creation d'un nouvel iser en DB, si success retourne l'objet persiste
  * @param {Req} req la requete provenant du client
- * @param {Res} res la reponse a construire et a envoyer au client
+ * @param {Res} res la reponse envoye en clien: userId et email
  */
 exports.create_user = (req, res) => {
   //Validation de la requete
@@ -45,9 +45,66 @@ exports.create_user = (req, res) => {
 /**
  * Permet de trouver un user
  * @param {Req} req la requete provenant du client
- * @param {Res} res la reponse a construire et a envoyer au clien
+ * @param {Res} res la reponse sous forme userId, username, email
  */
 exports.get_one_user = (req, res) => {
+  //Recuperation du id du user dans parametre url
+  const id = req.auth.userId
+
+  console.log(id);
+  //Recherche du user avec id du token
+  User.findOne({ where: { id: req.auth.userId } })
+      .then((user) => {
+        if (!user) {
+          return res.status(401).json({ error: "Bad credentials !" });
+        } else {
+          res.status(200).json({
+            userId: user.id,
+            username: user.username,
+            email: user.email,
+          });
+        }
+      })
+      .catch((error) =>
+        res.status(500).json({ message: "Internal error", error })
+      );
+  // //Recuperation du mail et password dans body de req
+  // const email = req.body.email;
+  // const password = req.body.password;
+
+  // // Valider la requete
+  // if (!email || !password)
+  //   return res.status(400).json({ message: "Data missing!" });
+    
+
+  // if (id != req.auth.userId) {
+  //   res.status(401).json({ message: "Unauthorized!" });
+  // } else {
+  //   //Recherche du user avec mail et id du token
+  //   User.findOne({ where: { email: email, id: req.auth.userId } })
+  //     .then((user) => {
+  //       if (!user) {
+  //         return res.status(401).json({ error: "Bad credentials !" });
+  //       } else {
+  //         res.status(200).json({
+  //           userId: user.id,
+  //           username: user.username,
+  //           email: user.email,
+  //         });
+  //       }
+  //     })
+  //     .catch((error) =>
+  //       res.status(500).json({ message: "Internal error", error })
+  //     );
+  // }
+};
+
+/**
+ * Permet de d'avoir un token
+ * @param {Req} req la requete provenant du client
+ * @param {Res} res la reponse forme body: userId et token
+ */
+exports.get_user_token = (req, res) => {
   //Recuperation du id du user dans parametre url
   const email = req.body.email;
   const password = req.body.password;
@@ -201,7 +258,6 @@ exports.delete_user = (req, res) => {
       );
   }
 };
-
 
 ////////////////////////////////////////// -- ////////////////////////////////////////////////////////////
 
