@@ -49,25 +49,25 @@ exports.create_user = (req, res) => {
  */
 exports.get_one_user = (req, res) => {
   //Recuperation du id du user dans parametre url
-  const id = req.auth.userId
+  const id = req.auth.userId;
 
   console.log(id);
   //Recherche du user avec id du token
   User.findOne({ where: { id: req.auth.userId } })
-      .then((user) => {
-        if (!user) {
-          return res.status(401).json({ error: "Bad credentials !" });
-        } else {
-          res.status(200).json({
-            userId: user.id,
-            username: user.username,
-            email: user.email,
-          });
-        }
-      })
-      .catch((error) =>
-        res.status(500).json({ message: "Internal error", error })
-      );
+    .then((user) => {
+      if (!user) {
+        return res.status(401).json({ error: "Bad credentials !" });
+      } else {
+        res.status(200).json({
+          userId: user.id,
+          username: user.username,
+          email: user.email,
+        });
+      }
+    })
+    .catch((error) =>
+      res.status(500).json({ message: "Internal error", error })
+    );
   // //Recuperation du mail et password dans body de req
   // const email = req.body.email;
   // const password = req.body.password;
@@ -75,7 +75,6 @@ exports.get_one_user = (req, res) => {
   // // Valider la requete
   // if (!email || !password)
   //   return res.status(400).json({ message: "Data missing!" });
-    
 
   // if (id != req.auth.userId) {
   //   res.status(401).json({ message: "Unauthorized!" });
@@ -128,8 +127,7 @@ exports.get_user_token = (req, res) => {
                 userId: user.id,
                 token: jwt.sign(
                   { userId: user.id },
-                  process.env.USER_SECRET_TOKEN,
-                  { expiresIn: "24h" }
+                  process.env.USER_SECRET_TOKEN
                 ),
               });
             }
