@@ -16,8 +16,8 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 const db = {
   sequelize,
   DataTypes,
-  User: require("./user.model")(sequelize, DataTypes), // Ajouter le model user pour la synchronisation
-  Task: require("./task.model")(sequelize, DataTypes), // Ajouter le model task pour la synchronisation
+  User: require("./user.model")(sequelize, DataTypes), // Utilisation du model User pour la synchronisation
+  Task: require("./task.model")(sequelize, DataTypes), // Utilisation du model task pour la synchronisation
 };
 
 // Ajout de la relation 1 user has many tasks - 1 TO MANY RELATION

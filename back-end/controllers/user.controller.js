@@ -34,11 +34,11 @@ exports.create_user = (req, res) => {
           res.status(201).json({ userId: user.id, email: user.email })
         )
         .catch((error) =>
-          res.status(400).json({ message: `Erreur create in DB  ${error}` })
+          res.status(400).json({ message: `Error create in DB  ${error}` })
         );
     })
     .catch((error) =>
-      res.status(500).json({ message: "Erreur create in DB ", error })
+      res.status(500).json({ message: `Error create in DB  ${error}` })
     );
 };
 
@@ -68,34 +68,6 @@ exports.get_one_user = (req, res) => {
     .catch((error) =>
       res.status(500).json({ message: "Internal error", error })
     );
-  // //Recuperation du mail et password dans body de req
-  // const email = req.body.email;
-  // const password = req.body.password;
-
-  // // Valider la requete
-  // if (!email || !password)
-  //   return res.status(400).json({ message: "Data missing!" });
-
-  // if (id != req.auth.userId) {
-  //   res.status(401).json({ message: "Unauthorized!" });
-  // } else {
-  //   //Recherche du user avec mail et id du token
-  //   User.findOne({ where: { email: email, id: req.auth.userId } })
-  //     .then((user) => {
-  //       if (!user) {
-  //         return res.status(401).json({ error: "Bad credentials !" });
-  //       } else {
-  //         res.status(200).json({
-  //           userId: user.id,
-  //           username: user.username,
-  //           email: user.email,
-  //         });
-  //       }
-  //     })
-  //     .catch((error) =>
-  //       res.status(500).json({ message: "Internal error", error })
-  //     );
-  // }
 };
 
 /**
@@ -153,7 +125,7 @@ exports.update_user = (req, res) => {
   const password = req.body.password;
 
   // Valider la requete
-  if (/* !req.body.username || !req.body.password  || */ !id)
+  if (!id)
     return res.status(400).json({ message: "Invalid, email, username or id" });
 
   if (id != req.auth.userId) {
@@ -205,25 +177,6 @@ exports.update_user = (req, res) => {
           })
         );
     }
-
-    // User.update(req.body, { where: { id } })
-    //   .then((number) => {
-    //     if (number == 1) {
-    //       res.json({ message: "Update successed !" });
-    //     } else {
-    //       console.log(number);
-    //       res.json({ message: `User id = ${id} not found !` });
-    //     }
-    //   })
-    //   .catch((error) =>
-    //     res.status(500).json({
-    //       message: `Error in updated user where id = ${id}`,
-    //       error,
-    //     })
-    //   )
-    //   .catch((error) =>
-    //     res.status(500).json({ message: "Erreur create in DB ", error })
-    //   );
   }
 };
 
@@ -258,43 +211,6 @@ exports.delete_user = (req, res) => {
 };
 
 ////////////////////////////////////////// -- ////////////////////////////////////////////////////////////
-
-/**
- * Permet la modification du username et mail
- * @param {Req} req la requete provenant du client
- * @param {Res} res la reponse a construire et a envoyer au client
- */
-exports.update_user_first = (req, res) => {
-  const id = Number(req.params.id);
-  const password = req.body.password;
-
-  // Valider la requete
-  if (!req.body.username /* || !req.body.password  */ || !id)
-    return res.status(400).json({ message: "Invalid, email, username or od" });
-
-  if (id != req.auth.userId) {
-    res.status(401).json({ message: "Unauthorized!" });
-  } else {
-    User.update(req.body, { where: { id } })
-      .then((number) => {
-        if (number == 1) {
-          res.json({ message: "Update successed !" });
-        } else {
-          console.log(number);
-          res.json({ message: `User id = ${id} not found !` });
-        }
-      })
-      .catch((error) =>
-        res.status(500).json({
-          message: `Error in updated user where id = ${id}`,
-          error,
-        })
-      )
-      .catch((error) =>
-        res.status(500).json({ message: "Erreur create in DB ", error })
-      );
-  }
-};
 /**
  * Permet la modification du password
  * @param {Req} req la requete provenant du client
@@ -342,47 +258,3 @@ exports.update_user_password = (req, res) => {
     });
   }
 };
-
-/**
- * Recupere la liste de tous les users en DB et la retourne au client
- * @param {Req} req la requete provenant du client
- * @param {Res} res la reponse a construire et a envoyer au client
- */
-// exports.get_users = (req, res) => {
-//   User.findAll({})
-//     .then((data) => res.json({ data }))
-//     .catch((error) =>
-//       res.status(500).json({ message: "Internal error, error" })
-//     );
-// };
-
-/**
- * Permet les tasks du User
- * -Connexion de la relation User et Tasks
- * @param {Req} req la requete provenant du client
- * @param {Res} res la reponse a construire et a envoyer au clien
- */
-// exports.get_user_tasks = (red, res) => {
-//   //Recuperation de l'id  de l'user a partir de la requete
-//   const id = Number(req.params.id);
-
-//   //Vérification des inputs obligatoires
-//   if (!id) {
-//     return res.status(400).json({ error: "Missing parameters" });
-//   }
-
-//   //Nous recherchons les tasks du users
-//   User.findAll({
-//     include: [
-//       {
-//         model: Task,
-//         as: "task",
-//       },
-//     ],
-//     where: { id: 1 },
-//   })
-//     .then((data) => res.json({ data }))
-//     .catch((error) =>
-//       res.status(500).json({ message: "Internal error, error" })
-//     );
-// };

@@ -23,20 +23,7 @@ db.sequelize
   .then(() =>
     console.log("Connected with database ok. Sync done!")
   )
-  .catch((error) => console.log("ERREUR - Échec connexion a la DB ", error));
-
-// Ajout de la relation 1 user has many tasks - 1 TO MANY RELATION
-
-// db.authenticate()
-//   .then(() =>
-//     console.log("Connection  to database has been established successfully.")
-//   )
-//   .catch((err) => console.error("Unable to connect to the database:", err));
-
-// // Testing de l'API
-// app.get("/", function (req, res) {
-//   res.send("Hello Listing, send me your requests!");
-// });
+  .catch((error) => console.log("ERROR - Cannot connect with Database ", error));
 
 // - ROUTER
 

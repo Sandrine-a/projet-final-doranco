@@ -1,5 +1,4 @@
-const { Task, User } = require("../models/index");
-// const Task = require("../models/index").Task;
+const { Task, User } = require("../models/index");;
 
 /**
  * Permet la creation d'un nouvel employe en DB, si success retourne l'objet persiste
@@ -34,24 +33,10 @@ exports.create_task = (req, res) => {
       Task.create(task)
         .then((data) => res.status(201).json({id: data.id}))
         .catch((error) =>
-          res.status(400).json({ message: `Erreur create in DB  ${error}` })
+          res.status(400).json({ message: `Error create in DB  ${error}` })
         );
     })
     .catch((error) => res.status(400).json({ message: `Error ${error}` }));
-
-  // Creer employe a enregistrer
-  // const task = {
-  //   title,
-  //   content,
-  //   day,
-  //   time,
-  //   taskColor,
-  // };
-  // Task.create(task)
-  //   .then((data) => res.status(201).json({ data }))
-  //   .catch((error) =>
-  //     res.status(500).json({ message: "Failed to create in DB ", error })
-  //   );
 };
 /**
  * Permet la mdoficaition d'une task en DB, si success retourne l'objet persiste
