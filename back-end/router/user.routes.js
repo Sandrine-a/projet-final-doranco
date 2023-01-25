@@ -4,8 +4,6 @@ const user_ctrl = require("../controllers/user.controller");
 const auth = require("../middleware/auth");
 
 // Enregistement des endpoints et redirection des requetes vers les methodes du controller
-// router.get("/", user_ctrl.get_users); /// A SUPPRIMER
-// router.get("/:id", user_ctrl.get_one_user); // Pour LOGIN
 
 router.post("/signup", user_ctrl.create_user); // Pour SIGNUP
 router.post("/token", user_ctrl.get_user_token); // Pour AVOIR LE TOKEN

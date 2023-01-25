@@ -38,7 +38,7 @@ exports.create_user = (req, res) => {
         );
     })
     .catch((error) =>
-      res.status(500).json({ message: `Error create in DB  ${error}` })
+      res.status(500).json({ message: `Error with DB  ${error}` })
     );
 };
 
